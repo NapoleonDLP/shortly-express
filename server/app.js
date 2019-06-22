@@ -5,7 +5,6 @@ const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const Promise = require('bluebird');
-// const models = Promise.promisifyAll(require('./models'));
 const models = require('./models');
 
 const app = express();
@@ -88,21 +87,14 @@ app.post('/login', (req, res, next) => {
 
   //check to see if salt + newPassword + hashFunc = hashedpassword from db
 
-  //
-  // var userName = req.body.username;
-  // var attempted = req.body.password;
-  // var xpassword = models.Users.get({ password: 'xxx' });
-  // var xsalt = models.Users.get({ salt: 'yyy' });
-  // console.log('ARGS FOR QUERY: ', userName, attempted, xpassword, xsalt);
-
-
-  // models.Users.compare(attempted, xpassword, xsalt);
-  // if (err) {
-  //   res.send(err);
-  // }
-  models.Users.getAll(req.body.userName)
+  //because this is already promisified chain.then to call these methods asynchronously
+  models.Users.getAll({username: req.body.username})
     .then((result) => models.Users.compare(req.body.password, result[0].password, result[0].salt))
-    .then((result) => console.log(result));
+    .then((result) => console.log('++++++', result))
+
+    //check to see if its true allow login
+    //if false invalid username enter correct username password
+    .catch();
 });
 
 app.post('/signup', (req, res, next) => {
