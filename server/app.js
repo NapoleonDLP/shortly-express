@@ -4,10 +4,13 @@ const utils = require('./lib/hashUtils');
 const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
+const Promise = require('bluebird');
+// const models = Promise.promisifyAll(require('./models'));
 const models = require('./models');
 
 const app = express();
 
+// these are all express middlewares // which are installed in order to use
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
 app.use(partials());
@@ -86,15 +89,20 @@ app.post('/login', (req, res, next) => {
   //check to see if salt + newPassword + hashFunc = hashedpassword from db
 
   //
-  var userName = req.body.username;
-  var attempted = req.body.password;
-  var xpassword = models.Users.get({ password: 'xxx' });
-  var xsalt = models.Users.get({ salt: 'yyy' });
-  console.log('ARGS FOR QUERY: ', userName, attempted, xpassword, xsalt);
+  // var userName = req.body.username;
+  // var attempted = req.body.password;
+  // var xpassword = models.Users.get({ password: 'xxx' });
+  // var xsalt = models.Users.get({ salt: 'yyy' });
+  // console.log('ARGS FOR QUERY: ', userName, attempted, xpassword, xsalt);
 
 
-  models.Users.compare(attempted, xpassword, xsalt);
-  console.log('login post: ', req.body);
+  // models.Users.compare(attempted, xpassword, xsalt);
+  // if (err) {
+  //   res.send(err);
+  // }
+  models.Users.getAll(req.body.userName)
+    .then((result) => models.Users.compare(req.body.password, result[0].password, result[0].salt))
+    .then((result) => console.log(result));
 });
 
 app.post('/signup', (req, res, next) => {
