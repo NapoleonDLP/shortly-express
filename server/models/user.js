@@ -20,6 +20,7 @@ class Users extends Model {
    * @returns {boolean} A boolean indicating if the attempted password was correct.
    */
   compare(attempted, password, salt) {
+    console.log(arguments);
     return utils.compareHash(attempted, password, salt);
   }
 
@@ -34,6 +35,8 @@ class Users extends Model {
    * the record creation or rejected with the error that occured.
    */
   create({ username, password }) {
+    console.log('*******************');
+    console.log('USERNAME: ', username, 'PASSWORD: ', password);
     let salt = utils.createRandom32String();
 
     let newUser = {

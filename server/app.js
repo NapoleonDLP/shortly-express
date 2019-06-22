@@ -79,10 +79,30 @@ app.post('/links',
 /************************************************************/
 
 app.post('/login', (req, res, next) => {
+  // need to query db for hashedpassword and salt
+
+  //run salt with newPassword
+
+  //check to see if salt + newPassword + hashFunc = hashedpassword from db
+
+  //
+  var userName = req.body.username;
+  var attempted = req.body.password;
+  var xpassword = models.Users.get({ password: 'xxx' });
+  var xsalt = models.Users.get({ salt: 'yyy' });
+  console.log('ARGS FOR QUERY: ', userName, attempted, xpassword, xsalt);
+
+
+  models.Users.compare(attempted, xpassword, xsalt);
   console.log('login post: ', req.body);
 });
 
+app.post('/signup', (req, res, next) => {
+  //create a new user in DB
 
+  models.Users.create(req.body); // creates user with salt and hash in db. returns promise
+
+});
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail
 // assume the route is a short code and try and handle it here.
